@@ -21,10 +21,29 @@ async function handle(m) {
     catch(e){throw new Error('Откройте нужную вкладку, нажмите значок SOUND и повторите захват. Edge может запрещать захват этой страницы. '+e.message);}
     return audio('capture', {tabId:m.tabId, streamId, device:config.devices[config.output], volume:m.volume ?? 100});
   }
-  if (m.action==='switch') {
-    const output=nextOutput(config.output);
-    await audio('sink', {device:config.devices[output]});
+  if (m.action==='switch' || m.action==='select-output') {
+    const output=m.action==='switch'?nextOutput(config.output):m.output;
+    if(output!==0 && output!==1)throw new Error('Некорректный выход');
+    if(config.devices[0]===config.devices[1])throw new Error('Сначала выберите два разных аудиоустройства в настройках SOUND.');
+    const {sessions}=await audio('state');
+    const [active]=await chrome.tabs.query({active:true,lastFocusedWindow:true});
+    const tabId=active?.id;
+    const canCapture=Number.isInteger(tabId) && /^https?:/.test(active.url||'');
+    let added=false;
+    if(canCapture && !sessions.some(s=>s.tabId===tabId)) {
+      let streamId;
+      try {streamId=await chrome.tabCapture.getMediaStreamId({targetTabId:tabId});}
+      catch(e){throw new Error('Не удалось подключить звук. Откройте вкладку с видео и снова нажмите SOUND. '+e.message);}
+      await audio('capture',{tabId,streamId,device:config.devices[output],volume:100});
+      added=true;
+    } else if(!sessions.length) {
+      throw new Error('Откройте обычную вкладку с музыкой или видео и выберите выход в SOUND.');
+    }
+    try {await audio('sink', {device:config.devices[output]});}
+    catch(e){if(added)await audio('stop',{tabId});throw e;}
     await chrome.storage.local.set({output});
+    await chrome.action.setBadgeText({text:''});
+    await chrome.action.setTitle({title:'SOUND · Управление звуком'});
     return {ok:true};
   }
   if (m.action==='save') {

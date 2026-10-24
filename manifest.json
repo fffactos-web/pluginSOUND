@@ -1,12 +1,31 @@
 {
   "manifest_version": 3,
   "name": "SOUND · Audio Switcher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Два любимых аудиовыхода и независимая громкость вкладок — в одном месте.",
   "minimum_chrome_version": "116",
-  "permissions": ["tabCapture", "offscreen", "storage", "tabs"],
-  "background": {"service_worker": "background.js", "type": "module"},
-  "action": {"default_popup": "popup.html", "default_title": "SOUND · Управление звуком"},
+  "permissions": [
+    "tabCapture",
+    "offscreen",
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SOUND · Управление звуком"
+  },
   "options_page": "options.html",
-  "commands": {"switch-output": {"suggested_key": {"default": "Alt+Shift+S"}, "description": "Переключить выход управляемых вкладок"}}
+  "commands": {
+    "switch-output": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Переключить выход управляемых вкладок"
+    }
+  }
 }

@@ -3,9 +3,15 @@ async function request(action,data={}){const r=await chrome.runtime.sendMessage(
 function report(e){$('notice').textContent=e.message;}
 async function load(){
   const {config,sessions}=await request('state');
-  $('device-name').textContent=config.names[config.output];
-  $('switch-label').textContent=`На ${config.names[1-config.output]}`;
-  if(!config.devices[0]&&!config.devices[1])$('notice').textContent='Выберите два устройства в настройках. Пока используется системный выход.';
+  for(let i=0;i<2;i++){
+    const button=$(`output${i}`), selected=sessions.length>0 && config.output===i;
+    $(`name${i}`).textContent=config.names[i];
+    button.setAttribute('aria-pressed',String(selected));
+    button.querySelector('.choice-state').textContent=selected?'● Звук здесь':'Выбрать';
+    button.disabled=false;
+  }
+  $('routing-hint').textContent=sessions.length?'Нажмите на выход, чтобы перенести звук подключённых вкладок.':'Нажмите на устройство — подключим звук текущей вкладки.';
+  if(config.devices[0]===config.devices[1])$('notice').textContent='Выберите два разных аудиоустройства в настройках SOUND.';
   const tabs=await chrome.tabs.query({});
   const visible=tabs.filter(t=>t.audible||sessions.some(s=>s.tabId===t.id)||t.active&&!/^(edge|chrome|about|chrome-extension):/.test(t.url||''));
   $('count').textContent=`${sessions.length} под управлением`;
@@ -28,5 +34,10 @@ async function load(){
   }
 }
 $('settings').onclick=()=>chrome.runtime.openOptionsPage();
-$('switch').onclick=async()=>{$('switch').disabled=true;try{await request('switch');$('notice').textContent='';await load();}catch(e){report(e);}finally{$('switch').disabled=false;}};
+for(let i=0;i<2;i++)$(`output${i}`).onclick=async()=>{
+  for(let j=0;j<2;j++)$(`output${j}`).disabled=true;
+  $('notice').textContent='Подключаем звук…';
+  try{await request('select-output',{output:i});$('notice').textContent='';await load();}
+  catch(e){report(e);}finally{for(let j=0;j<2;j++)$(`output${j}`).disabled=false;}
+};
 load().catch(report);

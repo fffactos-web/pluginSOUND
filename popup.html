@@ -1,6 +1,10 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><title>SOUND</title></head><body class="popup">
 <header><div class="brand"><span class="logo">◒</span>SOUND</div><button id="settings" class="small" aria-label="Настройки">⚙ Настройки</button></header>
 <div class="eyebrow">ВАШ ЗВУК. ВАШИ ПРАВИЛА.</div><h1>В нужном направлении.</h1><p>Переключайте выход. Настраивайте каждую вкладку.</p>
-<section class="panel"><div class="eyebrow">АУДИОВЫХОД</div><div class="device"><div class="device-icon" id="device-icon">♬</div><div><strong id="device-name">Загрузка…</strong><div class="pill"><span class="status-dot"></span>ДЛЯ УПРАВЛЯЕМЫХ ВКЛАДОК</div></div></div><button class="primary switch" id="switch"><span id="switch-label">Переключить</span><span>⇄</span></button></section>
+<section class="panel"><div class="eyebrow">КУДА ВЫВЕСТИ ЗВУК?</div>
+<div class="output-choices" role="group" aria-label="Аудиовыход">
+<button class="output-choice" id="output0" aria-pressed="false" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="12" width="4" height="8" rx="2"/><rect x="17" y="12" width="4" height="8" rx="2"/></svg><strong id="name0">Наушники</strong><span class="choice-state">Выбрать</span></button>
+<button class="output-choice" id="output1" aria-pressed="false" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/></svg><strong id="name1">Динамики</strong><span class="choice-state">Выбрать</span></button>
+</div><p class="routing-hint" id="routing-hint">Нажмите на устройство — подключим звук текущей вкладки.</p></section>
 <div class="section-head"><h2>Микшер вкладок</h2><span class="count" id="count"></span></div><div id="tabs"></div><div id="notice" class="notice" role="status" aria-live="polite"></div>
 <footer><span>Быстрое переключение</span><span><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></span></footer><script type="module" src="popup.js"></script></body></html>
